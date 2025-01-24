@@ -1,5 +1,4 @@
 using MassTransit;
-using ShippingService.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +8,7 @@ builder.Services.AddMassTransit(x =>
     {
         cfg.Host("rabbitmq://localhost");
 
-        cfg.ReceiveEndpoint("shipping-order-queue", e =>
+        cfg.ReceiveEndpoint("tracking-order-placed", e =>
         {
             e.Consumer<OrderPlacedConsumer>();
         });

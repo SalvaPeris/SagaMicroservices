@@ -11,7 +11,7 @@ builder.Services.AddMassTransit(x =>
     {
         cfg.Host("rabbitmq://localhost");
 
-        cfg.ReceiveEndpoint("tracking-order-placed", e =>
+        cfg.ReceiveEndpoint("tracking-order-queue", e =>
         {
             e.Consumer<OrderPlacedConsumer>(context);
             e.Bind("order-placed-exchange", x =>

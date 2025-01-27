@@ -8,8 +8,8 @@ builder.Services.AddMassTransit(options =>
     options.UsingRabbitMq((context, configuration) =>
     {
         configuration.Host("rabbitmq://localhost");
-        configuration.Message<OrderPlaced>(x => x.SetEntityName("order-placed-exchange"));
-        configuration.Publish<OrderPlaced>(x => x.ExchangeType = "direct");
+        configuration.Message<OrderPlaced>(x => x.SetEntityName("order-topic-exchange"));
+        configuration.Publish<OrderPlaced>(x => x.ExchangeType = "topic");
     });
 });
 
@@ -23,7 +23,7 @@ app.MapPost("/orders", async (OrderRequest order, IBus bus) =>
     var orderPlacedMessage = new OrderPlaced(order.orderId, order.quantity);
     await bus.Publish(orderPlacedMessage, context =>
     {
-        context.SetRoutingKey(order.quantity < 10 ? "order.shipping" : "order.tracking");
+        context.SetRoutingKey(order.quantity > 10 ? "order.shipping" : "order.regular.tracking");
     });
 
     return Results.Created($"/orders/{order.orderId}", orderPlacedMessage);

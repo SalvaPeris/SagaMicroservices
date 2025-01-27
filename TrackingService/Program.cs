@@ -14,10 +14,10 @@ builder.Services.AddMassTransit(x =>
         cfg.ReceiveEndpoint("tracking-order-queue", e =>
         {
             e.Consumer<OrderPlacedConsumer>(context);
-            e.Bind("order-placed-exchange", x =>
+            e.Bind("order-topic-exchange", x =>
             {
-                x.RoutingKey = "order.tracking";
-                x.ExchangeType = "direct";
+                x.RoutingKey = "order.#";
+                x.ExchangeType = "topic";
             });
         });
     });

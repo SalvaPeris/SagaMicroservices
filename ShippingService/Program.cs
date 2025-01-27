@@ -21,7 +21,12 @@ builder.Services.AddMassTransit(x =>
                 x.ExchangeType = "direct";
             });
 
-            e.UseMessageRetry(r => r.Exponential(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(5)));
+            e.UseKillSwitch(options =>
+            {
+                options.SetActivationThreshold(2);
+                options.SetTripThreshold(0.1);
+                options.SetRestartTimeout(m: 1);
+            });
         });
     });
 });

@@ -23,7 +23,7 @@ app.MapPost("/orders", async (OrderRequest order, IBus bus) =>
     var orderPlacedMessage = new OrderPlaced(order.orderId, order.quantity);
     await bus.Publish(orderPlacedMessage, context =>
     {
-        context.SetRoutingKey(order.quantity < 10 ? "order.shipping" : "order.tracking");
+        context.SetRoutingKey("order.created");
     });
 
     return Results.Created($"/orders/{order.orderId}", orderPlacedMessage);

@@ -8,8 +8,7 @@ builder.Services.AddMassTransit(options =>
     options.UsingRabbitMq((context, configuration) =>
     {
         configuration.Host("rabbitmq://localhost");
-        configuration.Message<OrderPlaced>(x => x.SetEntityName("order-placed-exchange"));
-        configuration.Publish<OrderPlaced>(x => x.ExchangeType = "direct");
+        configuration.Publish<OrderPlaced>();
     });
 });
 

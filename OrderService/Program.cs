@@ -18,17 +18,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.MapPost("/orders", async (OrderRequest order, IBus bus) =>
-{
-    var orderPlacedMessage = new OrderPlaced(order.orderId, order.quantity);
-    await bus.Publish(orderPlacedMessage, context =>
-    {
-        context.SetRoutingKey("order.created");
-    });
-
-    return Results.Created($"/orders/{order.orderId}", orderPlacedMessage);
-});
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -38,7 +27,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapPost("/orders", async (OrderDto order, IBus bus) =>
+{
+    var orderPlacedMessage = new OrderPlaced(order.OrderId, order.Quantity);
+    await bus.Publish(orderPlacedMessage);
+    return Results.Created($"/orders/{order.OrderId}", orderPlacedMessage);
+});
+
 app.Run();
 
-
-public record OrderRequest(Guid orderId, int quantity);
+public record OrderDto(Guid OrderId, int Quantity);

@@ -26,6 +26,5 @@ public class OrderPlacedConsumer : IConsumer<OrderPlaced>
     {
         Console.WriteLine($"Inventory reserved for Order {context.Message.OrderId}");
         await context.Publish(new InventoryReserved(context.Message.OrderId));
-        return Task.CompletedTask;
     }
 }

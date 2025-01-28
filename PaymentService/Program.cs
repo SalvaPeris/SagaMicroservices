@@ -5,14 +5,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<OrderPlacedConsumer>();
+    x.AddConsumer<InventoryReservedConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host("rabbitmq://localhost");
-        cfg.ReceiveEndpoint("order-placed", e =>
+        cfg.ReceiveEndpoint("inventory-reserved", e =>
         {
-            e.Consumer<OrderPlacedConsumer>();
+            e.Consumer<InventoryReservedConsumer>();
         });
     });
 });
@@ -20,12 +20,11 @@ builder.Services.AddMassTransit(x =>
 var app = builder.Build();
 app.Run();
 
-public class OrderPlacedConsumer : IConsumer<OrderPlaced>
+public class InventoryReservedConsumer : IConsumer<InventoryReserved>
 {
-    public async Task Consume(ConsumeContext<OrderPlaced> context)
+    public async Task Consume(ConsumeContext<InventoryReserved> context)
     {
-        Console.WriteLine($"Inventory reserved for Order {context.Message.OrderId}");
-        await context.Publish(new InventoryReserved(context.Message.OrderId));
-        return Task.CompletedTask;
+        Console.WriteLine($"Payment processed for Order {context.Message.OrderId}");
+        await context.Publish(new PaymentCompleted(context.Message.OrderId));
     }
 }
